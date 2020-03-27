@@ -30,7 +30,7 @@
  /* Seed variables  */
 static unsigned long x[MAX_STREAMS], y[MAX_STREAMS], z[MAX_STREAMS], c[MAX_STREAMS];
 
-int pfsd_srand32_init_stream(unsigned long seed, int stream)
+int dcnsld_srand32_init_stream(unsigned long seed, int stream)
 { 
 	if (stream < 0 || stream >= MAX_STREAMS)
 		return EINVAL;
@@ -47,12 +47,12 @@ int pfsd_srand32_init_stream(unsigned long seed, int stream)
 	return 0;
 }
 
-int pfsd_srand32_init(unsigned long seed)
+int dcnsld_srand32_init(unsigned long seed)
 { 
 	int i;
 	int status=0;
 	for (i=0; i< MAX_STREAMS; i++){
-		status=pfsd_srand32_init_stream(seed, i);
+		status=dcnsld_srand32_init_stream(seed, i);
 		if ( status )
 			return status;
 	}
@@ -60,7 +60,7 @@ int pfsd_srand32_init(unsigned long seed)
 }
 
 
-unsigned int pfsd_srand32(int stream)
+unsigned int dcnsld_srand32(int stream)
 { 
 	unsigned long long t, a=698769069ULL;
 

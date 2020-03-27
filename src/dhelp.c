@@ -54,7 +54,7 @@ int dhelp(void)
 	int i;  
 
 	for( i = 0;i < (sizeof( dconsole_help_strs ) / sizeof( char *) ); i++ )
-		pfsprint("%s",dconsole_help_strs[i] );
+		dcnslprint("%s",dconsole_help_strs[i] );
 
 	return 0;
 }
@@ -81,7 +81,7 @@ static char *jexec_cmd_help[]  = {
 	" Example: JEXEC \"ls -als\"\n"
 };
 
-#if defined PFS_CONSOLE_HISTORY
+#if defined DCNSL_CONSOLE_HISTORY
 static char *history_cmd_help[]  = {
 	"\nCommand: History\n\n",
 	"Description: Show the command history\n",
@@ -150,48 +150,48 @@ int dcli_help( int command )
 	switch( command ){
 	case EXIT:
 		for( i = 0;i < (sizeof( exit_cmd_help ) / sizeof( char *) ); i++ )
-			pfsprint("%s",exit_cmd_help[i] );
+			dcnslprint("%s",exit_cmd_help[i] );
 		break;
 	case EXEC:
 		for( i = 0;i < (sizeof( exec_cmd_help ) / sizeof( char *) ); i++ )
-			pfsprint("%s",exec_cmd_help[i] );
+			dcnslprint("%s",exec_cmd_help[i] );
 		break;
 	case JEXEC:
 		for( i = 0;i < (sizeof( jexec_cmd_help ) / sizeof( char *) ); i++ )
-			pfsprint("%s",jexec_cmd_help[i] );
+			dcnslprint("%s",jexec_cmd_help[i] );
 		break;
 	case RUN:
-		pfsprint("%s",run_cmd_help );
+		dcnslprint("%s",run_cmd_help );
 		break;
 	case LIST:
-		pfsprint("%s",list_cmd_help );
+		dcnslprint("%s",list_cmd_help );
 		break;
 	case LOAD:
-		pfsprint("%s",load_cmd_help );
+		dcnslprint("%s",load_cmd_help );
 		break;
 	case ENABLE:
-		pfsprint("%s",enable_cmd_help );
+		dcnslprint("%s",enable_cmd_help );
 		break;
 	case DISABLE:
-		pfsprint("%s",disable_cmd_help );
+		dcnslprint("%s",disable_cmd_help );
 		break;
 	case SET:
-		pfsprint("%s",set_cmd_help );
+		dcnslprint("%s",set_cmd_help );
 		break;
 	case UNSET:
-		pfsprint("%s",unset_cmd_help );
+		dcnslprint("%s",unset_cmd_help );
 		break;
 	case SUMMARY:
-		pfsprint("%s",summary_cmd_help );
+		dcnslprint("%s",summary_cmd_help );
 		break;
-#if defined PFS_CONSOLE_HISTORY
+#if defined DCNSL_CONSOLE_HISTORY
 	case HISTORY:
 		for( i = 0;i < (sizeof( history_cmd_help ) / sizeof( char *) ); i++ )
-			pfsprint("%s",history_cmd_help[i] );
+			dcnslprint("%s",history_cmd_help[i] );
 		break;
 #endif
 	default:
-		pfsprint("invalid command %d\n", command );
+		dcnslprint("invalid command %d\n", command );
 		break;
 	}
 	

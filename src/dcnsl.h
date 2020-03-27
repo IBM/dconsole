@@ -1,7 +1,7 @@
 /*
- *  "dconsole.h" 
+ *  "dcnsl.h" 
  *
- *  (c) COPYRIGHT 2018 IBM Corp.
+ *  (c) COPYRIGHT 2020 IBM Corp.
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -13,58 +13,58 @@
  * limitations under the License.
  */
 
-#if !defined __PFS_CONSOLE__
-#define  __PFS_CONSOLE__
-#if !defined __PFS_DIAG__
+#if !defined __DCNSL_CONSOLE__
+#define  __DCNSL_CONSOLE__
+#if !defined __DCNSL_DIAG__
 #include "ddiag.h"
 #endif
 
 /* #include "list.h" */
-#include "pfsd_list.h"
+#include "dcnsl_list.h"
 
 #define PFSPRINT printf
-#define pfsprint PFSPRINT
-#define pfsp_debug(format,...)		\
+#define dcnslprint PFSPRINT
+#define dcnslp_debug(format,...)		\
 	do \
 		{\
 			struct dhandle *hndl = cnsl_get_hndl();	\
-			if ((hndl->flags & PFS_HNDL_FLAG_VERBOSITY_MASK) <= PFS_HNDL_FLAG_VERBOSITY_DEBUG) \
+			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_DEBUG) \
 				printf(format,##__VA_ARGS__);		\
 		}\
 	while(0)
 
-#define pfsp_info(format,...)		\
+#define dcnslp_info(format,...)		\
 	do \
 		{\
 			struct dhandle *hndl = cnsl_get_hndl();	\
-			if ((hndl->flags & PFS_HNDL_FLAG_VERBOSITY_MASK) <= PFS_HNDL_FLAG_VERBOSITY_INFO) \
+			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_INFO) \
 				printf(format,##__VA_ARGS__);		\
 		}\
 	while(0)
 
-#define pfsp_warn(format,...)		\
+#define dcnslp_warn(format,...)		\
 	do \
 		{\
 			struct dhandle *hndl = cnsl_get_hndl();	\
-			if ((hndl->flags & PFS_HNDL_FLAG_VERBOSITY_MASK) <= PFS_HNDL_FLAG_VERBOSITY_WARN) \
+			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_WARN) \
 				printf(format,##__VA_ARGS__);		\
 		}\
 	while(0)
 
-#define pfsp_error(format,...)		\
+#define dcnslp_error(format,...)		\
 	do \
 		{\
 			struct dhandle *hndl = cnsl_get_hndl();	\
-			if ((hndl->flags & PFS_HNDL_FLAG_VERBOSITY_MASK) <= PFS_HNDL_FLAG_VERBOSITY_ERROR) \
+			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_ERROR) \
 				printf(format,##__VA_ARGS__);		\
 		}\
 	while(0)
 
-#define pfsp_critical(format,...)		\
+#define dcnslp_critical(format,...)		\
 	do \
 		{\
 			struct dhandle *hndl = cnsl_get_hndl();	\
-			if ((hndl->flags & PFS_HNDL_FLAG_VERBOSITY_MASK) <= PFS_HNDL_FLAG_VERBOSITY_CRITICAL) \
+			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_CRITICAL) \
 				printf(format,##__VA_ARGS__);		\
 		}\
 	while(0)
@@ -102,7 +102,7 @@ extern int dconsole_readline(char *buf,int  max_size, char *prompt);
         self.reply_info['duration'] = duration
 */
 
-struct pfsc_exec_reply {
+struct dcnslc_exec_reply {
 	char  *timestamp;
 	char  *context;
 	char  *message;
@@ -111,7 +111,7 @@ struct pfsc_exec_reply {
 	char  *duration;
 };
 
-extern void dconsole_show_json(struct pfsc_exec_reply *reply);
-extern char *dconsole_get_json_str(struct pfsc_exec_reply *reply);
+extern void dconsole_show_json(struct dcnslc_exec_reply *reply);
+extern char *dconsole_get_json_str(struct dcnslc_exec_reply *reply);
 
-#endif /* __PFS_CONSOLE__ */
+#endif /* __DCNSL_CONSOLE__ */

@@ -28,7 +28,7 @@ char keyboard_banner[];
 
 void dprint_banner(void)
 {
-	pfsprint("%s\n", dbanner);
+	dcnslprint("%s\n", dbanner);
 }
 
 char dbanner[] = \

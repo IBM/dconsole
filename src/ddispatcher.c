@@ -128,10 +128,10 @@ int dplist_load(char *name)
 int dpts_show(struct ddiagnostic *tbl)
 {
 	int i=0;
-	pfsprint("\n%-6s %-40s %-11s %-10s %-10s\n","tnum","Description", "Flags", "disable", "status");
-	pfsprint("-------------------------------------------------------------------------------\n");
+	dcnslprint("\n%-6s %-40s %-11s %-10s %-10s\n","tnum","Description", "Flags", "disable", "status");
+	dcnslprint("-------------------------------------------------------------------------------\n");
 	while (tbl->p2f){
-		pfsprint("[%4d] %-40s 0x%08x %7d %10d\n",i+1,tbl->description, tbl->flags, tbl->disable, tbl->status);
+		dcnslprint("[%4d] %-40s 0x%08x %7d %10d\n",i+1,tbl->description, tbl->flags, tbl->disable, tbl->status);
 		tbl++;
 		i++;
 	}
@@ -155,10 +155,10 @@ int dpts_init(struct ddiagnostic *tbl)
 int dpts_summary(struct ddiagnostic *tbl)
 {
 	int i=0;
-	pfsprint("\n%-6s %-40s %-8s %-8s %-10s\n","tnum","Description", "pass", "fail", "status");
-	pfsprint("-------------------------------------------------------------------------------\n");
+	dcnslprint("\n%-6s %-40s %-8s %-8s %-10s\n","tnum","Description", "pass", "fail", "status");
+	dcnslprint("-------------------------------------------------------------------------------\n");
 	while (tbl->p2f){
-		pfsprint("[%4d] %-40s %4d %7d %7d\n",
+		dcnslprint("[%4d] %-40s %4d %7d %7d\n",
 		       i+1,tbl->description, tbl->summary.num_pass, tbl->summary.num_fail, tbl->status);
 		tbl++;
 		i++;
@@ -208,8 +208,8 @@ int dpts_run_script_old(char *cmdstr)
 	int status;
 	status = system((const char *)cmdstr);
 	if (status != 0)
-		return PFS_DIAG_FAIL;
-	return PFS_DIAG_PASS;
+		return DCNSL_DIAG_FAIL;
+	return DCNSL_DIAG_PASS;
 }
 
 /* dispatch table support:  script/shell command execution */
@@ -222,22 +222,22 @@ int dpts_run_script(char *cmdstr)
 	/* Open the command for reading. */
 	fp = popen(cmdstr, "r");
 	if (fp == NULL) {
-		pfsp_error("Failed to run command %s\n",cmdstr );
-		return PFS_DIAG_FAIL;
+		dcnslp_error("Failed to run command %s\n",cmdstr );
+		return DCNSL_DIAG_FAIL;
 	}
 
 	/* Read the output a line at a time - output it. */
 	while (fgets(path, sizeof(path), fp) != NULL) {
-		pfsp_info("%s", path);
+		dcnslp_info("%s", path);
 	}
 
 	/* close */
 	status = pclose(fp);
 
 	if (!status)
-		return PFS_DIAG_PASS;
+		return DCNSL_DIAG_PASS;
 	else
-		return PFS_DIAG_FAIL;
+		return DCNSL_DIAG_FAIL;
 }
 
 
@@ -247,8 +247,8 @@ void cnsl_show_flags(struct dhandle *hndl)
 
 char *cnsl_get_verbosity_str(struct dhandle *hndl)
 {
-	int level = hndl->flags & PFS_HNDL_FLAG_VERBOSITY_MASK;
-	level = level >> PFS_HNDL_FLAG_VERBOSITY_LSB;
+	int level = hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK;
+	level = level >> DCNSL_HNDL_FLAG_VERBOSITY_LSB;
 
 	char *verbosity_levels[] = {
 		"none", "debug", "info", "warn", "error", "critical" };
@@ -258,8 +258,8 @@ char *cnsl_get_verbosity_str(struct dhandle *hndl)
 
 char *cnsl_get_logging_str(struct dhandle *hndl)
 {
-	int level = hndl->flags & PFS_HNDL_FLAG_LOGGING_MASK;
-	level = level >> PFS_HNDL_FLAG_LOGGING_LSB;
+	int level = hndl->flags & DCNSL_HNDL_FLAG_LOGGING_MASK;
+	level = level >> DCNSL_HNDL_FLAG_LOGGING_LSB;
 
 	char *logging_levels[] = {
 		"none", "debug", "info", "warn", "error", "critical" };
@@ -271,7 +271,7 @@ int cnsl_validate_range(struct dhandle *hndl,int r1, int r2)
 {
 	if ((r1 > 0) && (r1 <= r2) && (r2 <= hndl->num_tests))
 		return 1;
-	pfsp_debug(" Out of Range\n");
+	dcnslp_debug(" Out of Range\n");
 	return 0;
 }
 
@@ -291,7 +291,7 @@ int cnsl_yn(const char *msg)
 	char *input = NULL;
 
 	if (msg)
-		pfsprint("%s\n",msg);	
+		dcnslprint("%s\n",msg);	
 
 	while (1){
 		input = readline(" Are you sure you want to continue?[YES/NO] ");
@@ -320,7 +320,7 @@ int cnsl_get_random_test( int sn, int en )
 		return -1;
 
 	while (1){
-		tnum = (pfsd_srand32(/*PFSD_SRAND_CNSL_STREAM*/255) % num_tests) +1;
+		tnum = (dcnsld_srand32(/*PFSD_SRAND_CNSL_STREAM*/255) % num_tests) +1;
 		if (tnum >= sn && tnum <= en)
 			break;
 	}
@@ -341,10 +341,10 @@ void cnsl_duration( unsigned long total_seconds, char *dstr )
 	}
 
 	if (dstr == NULL){
-		pfsp_info("total seconds %lu (%uh:%um:%us)\n", total_seconds, hours,minutes,seconds);
+		dcnslp_info("total seconds %lu (%uh:%um:%us)\n", total_seconds, hours,minutes,seconds);
 		return;
 	}
 
-	snprintf(dstr, PFS_MAX_DURATION_STR, "total seconds %lu (%uh:%um:%us)", total_seconds, hours,minutes,seconds);
+	snprintf(dstr, DCNSL_MAX_DURATION_STR, "total seconds %lu (%uh:%um:%us)", total_seconds, hours,minutes,seconds);
 	return;
 }

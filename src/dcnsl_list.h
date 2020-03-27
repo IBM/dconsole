@@ -1,5 +1,5 @@
-#ifndef __PFSD_LIST_H
-#define __PFSD_LIST_H
+#ifndef __DCNSL_LIST_H
+#define __DCNSL_LIST_H
 
 /* This file is from Linux Kernel (include/linux/list.h) 
  * and modified by simply removing hardware prefetching of list items. 
@@ -261,4 +261,4 @@ static inline void list_splice_init(struct list_head *list,
 	for (pos = (head)->next, n = pos->next; pos != (head); \
 		pos = n, n = pos->next)
 
-#endif  /*  __PFSD_LIST_H */
+#endif  /*  __DCNSL_LIST_H */

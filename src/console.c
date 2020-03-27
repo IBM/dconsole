@@ -77,7 +77,7 @@ int main (int argc, char **argv)
         
 
 	init_window();
-	pfsd_srand32_init(/*PFSD_SRAND_CNSL_STREAM*/255);
+	dcnsld_srand32_init(/*PFSD_SRAND_CNSL_STREAM*/255);
 
 	status = ddebugger(fullpath);
 	cleanup();
@@ -123,18 +123,18 @@ int dconsole_readline(char *buf,int  max_size, char *prompt)
         self.reply_info['duration'] = duration
 */
 
-void dconsole_show_json(struct pfsc_exec_reply *reply)
+void dconsole_show_json(struct dcnslc_exec_reply *reply)
 {
 	json_object *reply_object;
 
 	reply_object = json_object_new_object();
 	json_object_object_add(reply_object, "timestamp", json_object_new_string(reply->timestamp));
 	json_object_object_add(reply_object, "context", json_object_new_string(reply->context));
-	pfsprint("\t%s\n", json_object_to_json_string(reply_object));
+	dcnslprint("\t%s\n", json_object_to_json_string(reply_object));
 	json_object_put(reply_object);
 }
 
-char  *dconsole_get_json_str(struct pfsc_exec_reply *reply)
+char  *dconsole_get_json_str(struct dcnslc_exec_reply *reply)
 {
 	json_object *reply_object;
 	const char *jstr = NULL;

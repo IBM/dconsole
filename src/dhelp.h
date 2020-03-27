@@ -1,5 +1,5 @@
 /*
- *  "pfsc_help.c" 
+ *  "dcnslc_help.c" 
  *
  *  (c) COPYRIGHT 2017 IBM Corp.
  *

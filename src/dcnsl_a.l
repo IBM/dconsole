@@ -7,7 +7,7 @@
  *  Author : Jim Entenmann
  *  Date   : 6/23/2015
  *
- *  Description : lex specification for pfs console.
+ *  Description : lex specification for dcnsl console.
  *
  *  change history:
  * 
@@ -60,7 +60,7 @@ char *tstring;
 /*
  * tracks current line number
  */
-int pfsdbglineno ;
+int dcnsldbglineno ;
 
 /*************************************************/
 /*                                               */
@@ -90,7 +90,7 @@ static char *glbuf;
 		{ \
 		        glbuf = malloc(max_size);		       \
 			if (glbuf == NULL){			       \
-				pfsp_error("Error Allocating Buffer");   \
+				dcnslp_error("Error Allocating Buffer");   \
 				break;				       \
 			}					       \
 			result = dconsole_readline(glbuf,max_size,"dconsole> "); \
@@ -111,7 +111,7 @@ static char *glbuf;
 #define YY_FATAL_ERROR(msg) \
 	do \
 		{ \
-		(void) pfsp_critical( "%s\n", msg ); \
+		(void) dcnslp_critical( "%s\n", msg ); \
 		_abort( 1 ); \
 		} \
 	while ( 0 )
@@ -122,7 +122,7 @@ static char *glbuf;
 
 #ifdef ECHO
 #undef ECHO
-#define ECHO (void) pfsprint("%s",yytext )
+#define ECHO (void) dcnslprint("%s",yytext )
 #endif
 
 %}
@@ -273,7 +273,7 @@ eol	\n
 
 <<EOF>> return EOL;
 
-{eol}	{ pfsdbglineno++; return EOL; }
+{eol}	{ dcnsldbglineno++; return EOL; }
 
 [.\t]\n { return EOL ; }
 

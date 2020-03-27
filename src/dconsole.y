@@ -57,7 +57,7 @@ extern FILE *yyin, *yyout;
 extern char *yytext;
 extern char *tident;
 extern char *tstring;
-extern int pfsdbglineno;
+extern int dcnsldbglineno;
 extern void lex_init(void);
 
 #define TMPSTRBUFFSIZE 120
@@ -69,7 +69,7 @@ FILE *apdiagout;
 int   history_state;        /* last input to parser was history command */
 int   history_command;      /* history command number                   */
 
-#if defined PFS_CONSOLE_HISTORY
+#if defined DCNSL_CONSOLE_HISTORY
 static int history_lineno_enable;
 #endif
 
@@ -114,7 +114,7 @@ int ddebugger(char *path)
 	int rc;
 	int tnum;
 
-	 pfsdbglineno = 1;
+	 dcnsldbglineno = 1;
 	 ap_s_addr = 0x0;        /* start address                */
 	 ap_e_addr = 0x0;        /* end address                  */
 	 yyin  = stdin ;
@@ -124,7 +124,7 @@ int ddebugger(char *path)
 
 	 dhndl = (struct dhandle *)malloc(sizeof(struct dhandle));
 	 if ( dhndl == NULL ){
-		 pfsprint(" ** ERROR: allocating memory\n");
+		 dcnslprint(" ** ERROR: allocating memory\n");
 		 return -1;
 	 }
 
@@ -142,7 +142,7 @@ int ddebugger(char *path)
 	 /* printf ("%d\n", tnum ); */
 
 	 dprint_banner();
-	 pfsprint("\n");
+	 dcnslprint("\n");
 
 	 dhndl->cnsl_path = path;
 	 dhndl->table = dpts_get_table(0);
@@ -150,21 +150,21 @@ int ddebugger(char *path)
 	 dhndl->num_tests = dpts_init(dhndl->table);
 	 dhndl->loop_count=1;
 	 dhndl->loop_decrement=1;
-	 dhndl->flags = PFS_HNDL_FLAG_VERBOSITY_INFO | PFS_HNDL_FLAG_LOGGING_DEBUG;
+	 dhndl->flags = DCNSL_HNDL_FLAG_VERBOSITY_INFO | DCNSL_HNDL_FLAG_LOGGING_DEBUG;
 
 	 if(setjmp(jmpbuf) == 0){  /*save stuff for CTLC interrupt return*/
 		 /* Nothing to see here */
 	 }
 	 else { /* longjump got us here */
-		 pfsp_debug(" Longjump got us here !!!\n");
+		 dcnslp_debug(" Longjump got us here !!!\n");
 		 /* Need to kill back ground processes ?? */
                  yyrestart(yyin);
 	 }
 
 #if 0    
-	 pfsp_info("Starting PFS Console\n");
-	 pfsp_debug("XStarting PFS Console\n");
-	 pfsp_warn("Ytarting PFS Console\n");
+	 dcnslp_info("Starting PFS Console\n");
+	 dcnslp_debug("XStarting PFS Console\n");
+	 dcnslp_warn("Ytarting PFS Console\n");
 #endif
 
 	 lex_init();
@@ -183,7 +183,7 @@ int ddebugger(char *path)
 int yyerror ( s )
 char  *s;
 {
-	pfsprint("Error: %s\n",s );
+	dcnslprint("Error: %s\n",s );
 	return 1;
 }
 
@@ -313,7 +313,7 @@ command :  commands {}
         ;
 
 commands :    /* nothing */    {
-            pfsdbglineno--;
+            dcnsldbglineno--;
         }
         |   hex_2_decimal_cmd
         |   decimal_2_hex_cmd
@@ -379,7 +379,7 @@ exec_cmd : EXEC IDENT {
 
 	      /* JSON support */
 	      char *jreply = NULL;
-	      struct pfsc_exec_reply *reply = malloc(sizeof(struct pfsc_exec_reply));;
+	      struct dcnslc_exec_reply *reply = malloc(sizeof(struct dcnslc_exec_reply));;
 
 	      /* time & duration */
               struct timeval tv, tv_end;
@@ -387,7 +387,7 @@ exec_cmd : EXEC IDENT {
 	      struct tm *nowtm;
 	      char tmptbuf[64];
               unsigned long seconds;
-              char duration_str[PFS_MAX_DURATION_STR];
+              char duration_str[DCNSL_MAX_DURATION_STR];
 	      char line[1024];
 
 	      /* popen method */
@@ -406,7 +406,7 @@ exec_cmd : EXEC IDENT {
 	      nowtm = localtime(&nowtime);
 	      strftime(tmptbuf, sizeof(tmptbuf),"%Y-%m-%dT%H:%M:%S", nowtm);
 
-	      reply->context = "pfsconsole";
+	      reply->context = "dcnslconsole";
 	      reply->timestamp = tmptbuf;
 	      reply->message = tmpstr;
 	      reply->header = "na";
@@ -458,8 +458,8 @@ exec_cmd : EXEC IDENT {
 
 	      jreply = dconsole_get_json_str(reply);
 	      if (jreply != NULL){
-		      /* pfsprint("%s\n",jreply); */
-		      pfsp_info("%s\n",jreply);
+		      /* dcnslprint("%s\n",jreply); */
+		      dcnslp_info("%s\n",jreply);
 		      free(jreply);
 	      }
               gbl_rtn_status = ret;
@@ -473,18 +473,18 @@ exec_cmd : EXEC IDENT {
 history_cmd : HISTORY {
             }
 	    |  BANG num {
-#if defined PFS_CONSOLE_HISTORY
+#if defined DCNSL_CONSOLE_HISTORY
                     history_buff=NULL;
                     history_list_get_entry_num(history_get_handle(), &history_buff, $2);
                     /* this part will eventually tie into YY_INPUT to implement this 
                        part of the history command. It's a start */
                     if (history_buff){
-		        pfsprint("%d=%s\n", $2, history_buff);
+		        dcnslprint("%d=%s\n", $2, history_buff);
                         free(history_buff);
                         history_buff=NULL;
                     }
                     else {
-		        pfsprint("%d not found!\n", $2);
+		        dcnslprint("%d not found!\n", $2);
                     }
 #endif
             }
@@ -497,12 +497,12 @@ load_cmd : LOAD {
               if (dplist_load((char *)tident) >= 0){
                      dhndl->table = dpts_get_table(0);
                      dhndl->num_tests = dpts_init(dhndl->table);
-                     pfsprint(" -- Test suite %s loaded. Number of tests=%d\n",(char *)tident,
+                     dcnslprint(" -- Test suite %s loaded. Number of tests=%d\n",(char *)tident,
                               dhndl->num_tests);
 	             dpts_show(dhndl->table);
               }
               else {
-                    pfsprint(" Fail: table %s not found\n",(char *)tident);
+                    dcnslprint(" Fail: table %s not found\n",(char *)tident);
               }
 	    }
             ;
@@ -525,7 +525,7 @@ run_cmd : RUN run_list loop_spec {
 	      int single_mode;
               struct timeval tv_start, tv_end;
               unsigned long seconds;
-              char duration_str[PFS_MAX_DURATION_STR];
+              char duration_str[DCNSL_MAX_DURATION_STR];
               int qyn_y = 1;
               unsigned int flags;
 
@@ -545,36 +545,36 @@ run_cmd : RUN run_list loop_spec {
                   tnum = 0;
   	          while ((dhndl->table+tnum)->p2f != NULL){
                       flags = (dhndl->table+tnum)->flags;
-                      if ( dhndl->vars.flags & PFS_VARS_USE_MASK )
+                      if ( dhndl->vars.flags & DCNSL_VARS_USE_MASK )
                          flags &= dhndl->vars.mask;
 		      if ((dhndl->table+tnum)->run){
-                              if (PFS_DF_RUN_QUERY_YN  & flags){
+                              if (DCNSL_DF_RUN_QUERY_YN  & flags){
                                       qyn_y = cnsl_yn(" ** Destructive Test **");
                               }
-			      if ( qyn_y  && (( !single_mode && ((PFS_DF_RUN_ONCE & flags)==0)) || single_mode) ){
-				      pfsp_info(" -- Running test [%4d] %s\n", tnum+1, (dhndl->table+tnum)->description);
+			      if ( qyn_y  && (( !single_mode && ((DCNSL_DF_RUN_ONCE & flags)==0)) || single_mode) ){
+				      dcnslp_info(" -- Running test [%4d] %s\n", tnum+1, (dhndl->table+tnum)->description);
                                       gettimeofday(&tv_start,NULL);
 				      (dhndl->table+tnum)->status=(dhndl->table+tnum)->p2f(flags,(void *)st);
                                       gettimeofday(&tv_end,NULL);
                                       seconds = tv_end.tv_sec - tv_start.tv_sec;
                                       cnsl_duration( seconds, duration_str );
-				      pfsp_info(" -- Done status = %s, %s\n", 
-                                             (dhndl->table+tnum)->status==PFS_DIAG_PASS?"PASS":"FAIL", duration_str);
+				      dcnslp_info(" -- Done status = %s, %s\n", 
+                                             (dhndl->table+tnum)->status==DCNSL_DIAG_PASS?"PASS":"FAIL", duration_str);
 
-                                      if ((dhndl->table+tnum)->status == PFS_DIAG_FAIL && ((dhndl->flags & PFS_HNDL_FLAG_FAIL_CONTINUE)==0)){
+                                      if ((dhndl->table+tnum)->status == DCNSL_DIAG_FAIL && ((dhndl->flags & DCNSL_HNDL_FLAG_FAIL_CONTINUE)==0)){
 					      total_failures++;
                                              (dhndl->table+tnum)->summary.num_fail++;
 				      }
                                       else
                                              (dhndl->table+tnum)->summary.num_pass++;
-                                      if ((dhndl->table+tnum)->status == PFS_DIAG_FAIL && ((dhndl->flags & PFS_HNDL_FLAG_FAIL_CONTINUE)==0)){
+                                      if ((dhndl->table+tnum)->status == DCNSL_DIAG_FAIL && ((dhndl->flags & DCNSL_HNDL_FLAG_FAIL_CONTINUE)==0)){
                                           dhndl->loop_count =1;
                                           dhndl->loop_decrement =1;
                                           break;
                                       }   
 			      }
 			      else {
-				      pfsp_info(" -- Bypass test [%4d] %s\n", tnum+1, (dhndl->table+tnum)->description);
+				      dcnslp_info(" -- Bypass test [%4d] %s\n", tnum+1, (dhndl->table+tnum)->description);
                               }
                               qyn_y = 1;
 		      }
@@ -587,14 +587,14 @@ run_cmd : RUN run_list loop_spec {
               /* set the default loop count */
               dhndl->loop_count=1;
               dhndl->loop_decrement=1;
-              dhndl->flags &= ~PFS_HNDL_FLAG_RANDOM;
+              dhndl->flags &= ~DCNSL_HNDL_FLAG_RANDOM;
 	    }
 	    |  RUN RANDOM {
 	            int i=0;
                     int tnum;
                     struct timeval tv_start, tv_end;
                     unsigned long seconds;
-                    char duration_str[PFS_MAX_DURATION_STR];
+                    char duration_str[DCNSL_MAX_DURATION_STR];
                     int qyn_y = 1;
                     unsigned int flags;
 
@@ -606,47 +606,47 @@ run_cmd : RUN run_list loop_spec {
                     while (1) {
                           tnum =  cnsl_get_random_test( 1, dhndl->num_tests );
                           if ( tnum < 0){
-                                  pfsp_error(" Error: Generating random test number\n");
+                                  dcnslp_error(" Error: Generating random test number\n");
                                   break;
                           }
                           if (!cnsl_validate_range(dhndl,tnum, tnum)){
-                                  pfsp_error(" Error: Invalid test number %d\n", tnum);
+                                  dcnslp_error(" Error: Invalid test number %d\n", tnum);
                                   break;
                           }
                           tnum--;  /* zero based here on out */
                           flags = (dhndl->table+tnum)->flags;
-                          if ( dhndl->vars.flags & PFS_VARS_USE_MASK )
+                          if ( dhndl->vars.flags & DCNSL_VARS_USE_MASK )
                                    flags &= dhndl->vars.mask;
  		          if ((dhndl->table+tnum)->run){
-                                   if (PFS_DF_RUN_QUERY_YN  & flags){
+                                   if (DCNSL_DF_RUN_QUERY_YN  & flags){
                                       qyn_y = cnsl_yn(" ** Destructive Test **");
                                    }
                           }
                           if (!qyn_y)
                              break;
 
-   		          pfsp_info(" -- Running test [%4d] %s\n", tnum+1, (dhndl->table+tnum)->description);
+   		          dcnslp_info(" -- Running test [%4d] %s\n", tnum+1, (dhndl->table+tnum)->description);
 
                           gettimeofday(&tv_start,NULL);
 			  (dhndl->table+tnum)->status=(dhndl->table+tnum)->p2f(flags,(void *)st);
                           gettimeofday(&tv_end,NULL);
                           seconds = tv_end.tv_sec - tv_start.tv_sec;
                           cnsl_duration( seconds, duration_str );
-		          pfsp_info(" -- Done status = %s, %s\n", 
-                                     (dhndl->table+tnum)->status==PFS_DIAG_PASS?"PASS":"FAIL", duration_str);
-                          if ((dhndl->table+tnum)->status == PFS_DIAG_FAIL && ((dhndl->flags & PFS_HNDL_FLAG_FAIL_CONTINUE)==0)){
+		          dcnslp_info(" -- Done status = %s, %s\n", 
+                                     (dhndl->table+tnum)->status==DCNSL_DIAG_PASS?"PASS":"FAIL", duration_str);
+                          if ((dhndl->table+tnum)->status == DCNSL_DIAG_FAIL && ((dhndl->flags & DCNSL_HNDL_FLAG_FAIL_CONTINUE)==0)){
 				  total_failures++;
 				  (dhndl->table+tnum)->summary.num_fail++;
 			  }
                           else
 				  (dhndl->table+tnum)->summary.num_pass++;
 
-                          if ((dhndl->table+tnum)->status == PFS_DIAG_FAIL && ((dhndl->flags & PFS_HNDL_FLAG_FAIL_CONTINUE)==0)){
+                          if ((dhndl->table+tnum)->status == DCNSL_DIAG_FAIL && ((dhndl->flags & DCNSL_HNDL_FLAG_FAIL_CONTINUE)==0)){
 				  break;
                           }   
 
                    }
-	           dhndl->flags |= PFS_HNDL_FLAG_RANDOM;
+	           dhndl->flags |= DCNSL_HNDL_FLAG_RANDOM;
             }
 
             ;
@@ -761,143 +761,143 @@ enable_spec : /* nothing */ {
             ;
 
 set_cmd : SET {
-		    pfsprint(" address   64 bit hex value\n");
-		    pfsprint(" mask      32 bit hex value\n");
-		    pfsprint(" U32       32 bit hex value\n");
-		    pfsprint(" U64       32 bit hex value\n");
-		    pfsprint(" fail      stop, continue\n");
-		    pfsprint(" verbosity debug, info, warn, error, critical\n"
+		    dcnslprint(" address   64 bit hex value\n");
+		    dcnslprint(" mask      32 bit hex value\n");
+		    dcnslprint(" U32       32 bit hex value\n");
+		    dcnslprint(" U64       32 bit hex value\n");
+		    dcnslprint(" fail      stop, continue\n");
+		    dcnslprint(" verbosity debug, info, warn, error, critical\n"
 			     "------------------------------------------------\n");
-                    if ( dhndl->vars.flags & PFS_VARS_USE_ADDRESS )
-			    pfsprint(" address: 0x%jx\n", dhndl->vars.addr);
+                    if ( dhndl->vars.flags & DCNSL_VARS_USE_ADDRESS )
+			    dcnslprint(" address: 0x%jx\n", dhndl->vars.addr);
                     else
- 			    pfsprint(" address: not set\n");
-                    if ( dhndl->vars.flags & PFS_VARS_USE_MASK )
-			    pfsprint(" mask:    0x%08x\n", dhndl->vars.mask);
+ 			    dcnslprint(" address: not set\n");
+                    if ( dhndl->vars.flags & DCNSL_VARS_USE_MASK )
+			    dcnslprint(" mask:    0x%08x\n", dhndl->vars.mask);
                     else
- 			    pfsprint(" mask:    not set\n");
-                    if ( dhndl->vars.flags & PFS_VARS_USE_U32 )
-			    pfsprint(" U32:     0x%08x\n", dhndl->vars.u32);
+ 			    dcnslprint(" mask:    not set\n");
+                    if ( dhndl->vars.flags & DCNSL_VARS_USE_U32 )
+			    dcnslprint(" U32:     0x%08x\n", dhndl->vars.u32);
                     else
- 			    pfsprint(" U32:     not set\n");
-                    if ( dhndl->vars.flags & PFS_VARS_USE_U64 )
-			    pfsprint(" U64:     0x%jx\n", dhndl->vars.u64);
+ 			    dcnslprint(" U32:     not set\n");
+                    if ( dhndl->vars.flags & DCNSL_VARS_USE_U64 )
+			    dcnslprint(" U64:     0x%jx\n", dhndl->vars.u64);
                     else
- 			    pfsprint(" U64:     not set\n");
-                    pfsprint(" flags: 0x%08x\n fail:      %s\n", dhndl->flags, 
-			     dhndl->flags & PFS_HNDL_FLAG_FAIL_CONTINUE?"continue":"stop");
-                    pfsprint(" verbose : %s\n", cnsl_get_verbosity_str(dhndl));
-                    pfsprint(" loglevel: %s\n", cnsl_get_logging_str(dhndl));
+ 			    dcnslprint(" U64:     not set\n");
+                    dcnslprint(" flags: 0x%08x\n fail:      %s\n", dhndl->flags, 
+			     dhndl->flags & DCNSL_HNDL_FLAG_FAIL_CONTINUE?"continue":"stop");
+                    dcnslprint(" verbose : %s\n", cnsl_get_verbosity_str(dhndl));
+                    dcnslprint(" loglevel: %s\n", cnsl_get_logging_str(dhndl));
 
             }
             | SET ADDRESS hex_num {
-                    dhndl->vars.flags |= PFS_VARS_USE_ADDRESS;
+                    dhndl->vars.flags |= DCNSL_VARS_USE_ADDRESS;
                     dhndl->vars.addr = $3;
-		    pfsprint(" address: 0x%jx\n", dhndl->vars.addr);
+		    dcnslprint(" address: 0x%jx\n", dhndl->vars.addr);
 
             }
             | SET MASK expression {
-                    dhndl->vars.flags |= PFS_VARS_USE_MASK;
+                    dhndl->vars.flags |= DCNSL_VARS_USE_MASK;
                     dhndl->vars.mask = $3;
-		    pfsprint(" mask: 0x%08x\n", dhndl->vars.mask);
+		    dcnslprint(" mask: 0x%08x\n", dhndl->vars.mask);
 
             }
             | SET U64 hex_num {
-                    dhndl->vars.flags |= PFS_VARS_USE_U64;
+                    dhndl->vars.flags |= DCNSL_VARS_USE_U64;
                     dhndl->vars.u64 = $3;
-		    pfsprint(" U64: 0x%jx\n", dhndl->vars.u64);
+		    dcnslprint(" U64: 0x%jx\n", dhndl->vars.u64);
 
             }
             | SET U32 hex_num {
-                    dhndl->vars.flags |= PFS_VARS_USE_U32;
+                    dhndl->vars.flags |= DCNSL_VARS_USE_U32;
                     dhndl->vars.u32 = (uint32_t)$3;
-		    pfsprint(" U32: 0x%08x\n", dhndl->vars.u32);
+		    dcnslprint(" U32: 0x%08x\n", dhndl->vars.u32);
 
             }
             | SET CNSLFAIL STOP {
-                    dhndl->flags &= ~PFS_HNDL_FLAG_FAIL_CONTINUE;
-                    pfsprint(" fail: %s\n", 
-                              dhndl->flags & PFS_HNDL_FLAG_FAIL_CONTINUE?"Continue":"Stop");
+                    dhndl->flags &= ~DCNSL_HNDL_FLAG_FAIL_CONTINUE;
+                    dcnslprint(" fail: %s\n", 
+                              dhndl->flags & DCNSL_HNDL_FLAG_FAIL_CONTINUE?"Continue":"Stop");
             }
             | SET CNSLFAIL CONTINUE {
-                    dhndl->flags |= PFS_HNDL_FLAG_FAIL_CONTINUE;
-                    pfsprint(" fail: %s\n", 
-                             dhndl->flags & PFS_HNDL_FLAG_FAIL_CONTINUE?"Continue":"Stop");
+                    dhndl->flags |= DCNSL_HNDL_FLAG_FAIL_CONTINUE;
+                    dcnslprint(" fail: %s\n", 
+                             dhndl->flags & DCNSL_HNDL_FLAG_FAIL_CONTINUE?"Continue":"Stop");
             }
             | SET VERBOSITY DEBUG {
-		    dhndl->flags &= ~PFS_HNDL_FLAG_VERBOSITY_MASK;
-                    dhndl->flags |= PFS_HNDL_FLAG_VERBOSITY_DEBUG;
+		    dhndl->flags &= ~DCNSL_HNDL_FLAG_VERBOSITY_MASK;
+                    dhndl->flags |= DCNSL_HNDL_FLAG_VERBOSITY_DEBUG;
             }
             | SET VERBOSITY INFO {
-		    dhndl->flags &= ~PFS_HNDL_FLAG_VERBOSITY_MASK;
-                    dhndl->flags |= PFS_HNDL_FLAG_VERBOSITY_INFO;
+		    dhndl->flags &= ~DCNSL_HNDL_FLAG_VERBOSITY_MASK;
+                    dhndl->flags |= DCNSL_HNDL_FLAG_VERBOSITY_INFO;
             }
             | SET VERBOSITY WARN {
-		    dhndl->flags &= ~PFS_HNDL_FLAG_VERBOSITY_MASK;
-                    dhndl->flags |= PFS_HNDL_FLAG_VERBOSITY_WARN;
+		    dhndl->flags &= ~DCNSL_HNDL_FLAG_VERBOSITY_MASK;
+                    dhndl->flags |= DCNSL_HNDL_FLAG_VERBOSITY_WARN;
             }
             | SET VERBOSITY ERROR {
-		    dhndl->flags &= ~PFS_HNDL_FLAG_VERBOSITY_MASK;
-                    dhndl->flags |= PFS_HNDL_FLAG_VERBOSITY_ERROR;
+		    dhndl->flags &= ~DCNSL_HNDL_FLAG_VERBOSITY_MASK;
+                    dhndl->flags |= DCNSL_HNDL_FLAG_VERBOSITY_ERROR;
             }
             | SET VERBOSITY CRITICAL {
-		    dhndl->flags &= ~PFS_HNDL_FLAG_VERBOSITY_MASK;
-                    dhndl->flags |= PFS_HNDL_FLAG_VERBOSITY_CRITICAL;
+		    dhndl->flags &= ~DCNSL_HNDL_FLAG_VERBOSITY_MASK;
+                    dhndl->flags |= DCNSL_HNDL_FLAG_VERBOSITY_CRITICAL;
             }
             | SET LOGGING DEBUG {
-		    dhndl->flags &= ~PFS_HNDL_FLAG_LOGGING_MASK;
-                    dhndl->flags |= PFS_HNDL_FLAG_LOGGING_DEBUG;
+		    dhndl->flags &= ~DCNSL_HNDL_FLAG_LOGGING_MASK;
+                    dhndl->flags |= DCNSL_HNDL_FLAG_LOGGING_DEBUG;
             }
             | SET LOGGING INFO {
-		    dhndl->flags &= ~PFS_HNDL_FLAG_LOGGING_MASK;
-                    dhndl->flags |= PFS_HNDL_FLAG_LOGGING_INFO;
+		    dhndl->flags &= ~DCNSL_HNDL_FLAG_LOGGING_MASK;
+                    dhndl->flags |= DCNSL_HNDL_FLAG_LOGGING_INFO;
             }
             | SET LOGGING WARN {
-		    dhndl->flags &= ~PFS_HNDL_FLAG_LOGGING_MASK;
-                    dhndl->flags |= PFS_HNDL_FLAG_LOGGING_WARN;
+		    dhndl->flags &= ~DCNSL_HNDL_FLAG_LOGGING_MASK;
+                    dhndl->flags |= DCNSL_HNDL_FLAG_LOGGING_WARN;
             }
             | SET LOGGING ERROR {
-		    dhndl->flags &= ~PFS_HNDL_FLAG_LOGGING_MASK;
-                    dhndl->flags |= PFS_HNDL_FLAG_LOGGING_ERROR;
+		    dhndl->flags &= ~DCNSL_HNDL_FLAG_LOGGING_MASK;
+                    dhndl->flags |= DCNSL_HNDL_FLAG_LOGGING_ERROR;
             }
             | SET LOGGING CRITICAL {
-		    dhndl->flags &= ~PFS_HNDL_FLAG_LOGGING_MASK;
-                    dhndl->flags |= PFS_HNDL_FLAG_LOGGING_CRITICAL;
+		    dhndl->flags &= ~DCNSL_HNDL_FLAG_LOGGING_MASK;
+                    dhndl->flags |= DCNSL_HNDL_FLAG_LOGGING_CRITICAL;
             }
             ;
 
 
 unset_cmd : UNSET {
-                    dhndl->vars.flags &= ~PFS_VARS_USE_ADDRESS;
-                    dhndl->vars.flags &= ~PFS_VARS_USE_U32;
-                    dhndl->vars.flags &= ~PFS_VARS_USE_U64;
+                    dhndl->vars.flags &= ~DCNSL_VARS_USE_ADDRESS;
+                    dhndl->vars.flags &= ~DCNSL_VARS_USE_U32;
+                    dhndl->vars.flags &= ~DCNSL_VARS_USE_U64;
             }
             | UNSET ADDRESS {
-                    dhndl->vars.flags &= ~PFS_VARS_USE_ADDRESS;
+                    dhndl->vars.flags &= ~DCNSL_VARS_USE_ADDRESS;
             }
             | UNSET MASK {
-                    dhndl->vars.flags &= ~PFS_VARS_USE_MASK;
+                    dhndl->vars.flags &= ~DCNSL_VARS_USE_MASK;
             }
             | UNSET U64 {
-                    dhndl->vars.flags &= ~PFS_VARS_USE_U64;
+                    dhndl->vars.flags &= ~DCNSL_VARS_USE_U64;
             }
             | UNSET U32 {
-                    dhndl->vars.flags &= ~PFS_VARS_USE_U32;
+                    dhndl->vars.flags &= ~DCNSL_VARS_USE_U32;
             }
             ;
 
 hex_2_decimal_cmd : H2D hex_num {
-              pfsprint("0x%016llx %llu\n", $2, $2 );
+              dcnslprint("0x%016llx %llu\n", $2, $2 );
 	    }
             ;
 
 decimal_2_hex_cmd : D2H num {
-              pfsprint("%llu 0x%016llx\n", $2, $2 );
+              dcnslprint("%llu 0x%016llx\n", $2, $2 );
 	    }
             ;
 
 calc      : expression {
-              pfsprint(" = %llu 0x%016llx\n", $1 ,$1 );
+              dcnslprint(" = %llu 0x%016llx\n", $1 ,$1 );
           }
           ;
 
@@ -905,7 +905,7 @@ help      : HELP {
               dhelp();
           }
 	  | HELP text {
-		  pfsprint(" Help for %s does not exist !\n", (char *)$2);
+		  dcnslprint(" Help for %s does not exist !\n", (char *)$2);
           }
 	  | HELP EXIT {
                   dcli_help(EXIT);
@@ -974,9 +974,9 @@ text    :  IDENT  {
 	   ;
 
 exit_cmd : EXIT  { 
-              pfsprint("exiting....\n");
+              dcnslprint("exiting....\n");
 	      if (total_failures){
-		      pfsprint("%d total failures\n", total_failures);
+		      dcnslprint("%d total failures\n", total_failures);
 		      YYABORT;
 	      }
               YYACCEPT; 

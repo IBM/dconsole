@@ -1,7 +1,7 @@
 # myincludesubdir = $(pkgincludedir)/dconsole
 # 
 # pkginclude_HEADERS = $(top_srcdir)/src/dcnsl.h $(top_srcdir)/src/ddiag.h
-pkginclude_HEADERS = dcnsl.h ddiag.h pfsd_list.h
+pkginclude_HEADERS = dcnsl.h ddiag.h dcnsl_list.h
 
 bin_PROGRAMS = dconsole
 BUILT_SOURCES = dconsole.h 
