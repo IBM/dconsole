@@ -99,7 +99,7 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkgincludedir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_dconsole_OBJECTS = banner.$(OBJEXT) dconsole.$(OBJEXT) \
 	dcnsl_a.$(OBJEXT) ddispatcher.$(OBJEXT) console.$(OBJEXT) \
-	dhelp.$(OBJEXT) dsrand.$(OBJEXT)
+	dhelp.$(OBJEXT) dsrand.$(OBJEXT) dlogger.$(OBJEXT)
 dconsole_OBJECTS = $(am_dconsole_OBJECTS)
 dconsole_LDADD = $(LDADD)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -345,7 +345,7 @@ top_srcdir = @top_srcdir@
 # pkginclude_HEADERS = $(top_srcdir)/src/dcnsl.h $(top_srcdir)/src/ddiag.h
 pkginclude_HEADERS = dcnsl.h ddiag.h dcnsl_list.h
 BUILT_SOURCES = dconsole.h 
-dconsole_SOURCES = banner.c dconsole.y dcnsl_a.l ddispatcher.c  dhelp.h console.c  ddiag.h  dcnsl.h dhelp.c dsrand.c
+dconsole_SOURCES = banner.c dconsole.y dcnsl_a.l ddispatcher.c  dhelp.h console.c  ddiag.h  dcnsl.h dhelp.c dsrand.c dlogger.c
 AM_LDFLAGS = -ludev -ljson-c -lreadline -ldl
 AM_YFLAGS = -d
 AM_LFLAGS = -L -I -i
@@ -453,6 +453,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dconsole.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ddispatcher.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhelp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dlogger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dsrand.Po@am__quote@
 
 .c.o:

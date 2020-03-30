@@ -118,7 +118,7 @@ extern void dlogger_debug(char *format, ...);
 extern void dlogger_info(char *format, ...);
 extern void dlogger_warn(char *format, ...);
 extern void dlogger_error(char *format, ...);
-extern void dlogger_critcal(char *format, ...);
+extern void dlogger_critical(char *format, ...);
 
 #endif /* __DCNSL_CONSOLE__ */
 

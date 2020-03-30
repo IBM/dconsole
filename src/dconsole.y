@@ -108,7 +108,7 @@ struct dl_symbol_table st[] = {
 	 {
 		 (void *(*)(void *))dlogger_info,
 		 "dlogger_info"
-	 }.
+	 },
 	 {
 		 (void *(*)(void *))dlogger_debug,
 		 "dlogger_debug"
