@@ -15,6 +15,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 #include <readline/readline.h>
 #include <dirent.h>
@@ -57,7 +58,7 @@ void dlogger_error(char *format, ...)
 	return;
 }
 
-void dlogger_critcal(char *format, ...)
+void dlogger_critical(char *format, ...)
 {
 	va_list ap;
 	va_start(ap, format);
