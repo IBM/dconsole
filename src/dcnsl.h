@@ -114,4 +114,12 @@ struct dcnslc_exec_reply {
 extern void dconsole_show_json(struct dcnslc_exec_reply *reply);
 extern char *dconsole_get_json_str(struct dcnslc_exec_reply *reply);
 
+extern void dlogger_debug(char *format, ...);
+extern void dlogger_info(char *format, ...);
+extern void dlogger_warn(char *format, ...);
+extern void dlogger_error(char *format, ...);
+extern void dlogger_critcal(char *format, ...);
+
 #endif /* __DCNSL_CONSOLE__ */
+
+

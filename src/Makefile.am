@@ -5,7 +5,7 @@ pkginclude_HEADERS = dcnsl.h ddiag.h dcnsl_list.h
 
 bin_PROGRAMS = dconsole
 BUILT_SOURCES = dconsole.h 
-dconsole_SOURCES = banner.c dconsole.y dcnsl_a.l ddispatcher.c  dhelp.h console.c  ddiag.h  dcnsl.h dhelp.c dsrand.c
+dconsole_SOURCES = banner.c dconsole.y dcnsl_a.l ddispatcher.c  dhelp.h console.c  ddiag.h  dcnsl.h dhelp.c dsrand.c dlogger.c
 
 AM_LDFLAGS = -ludev -ljson-c -lreadline -ldl
 AM_YFLAGS = -d

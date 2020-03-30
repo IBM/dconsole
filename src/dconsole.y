@@ -92,7 +92,7 @@ void ctlc_handler(int sig)
    longjmp(jmpbuf, sig);
 }
 
- struct dl_symbol_table st[] = {
+struct dl_symbol_table st[] = {
 	 {
 		 (void *(*)(void *))cnsl_get_hndl,
 		 "cnsl_get_hndl"
@@ -104,8 +104,28 @@ void ctlc_handler(int sig)
 	 {
 		 (void *(*)(void *))dpts_run_script,
 		 "dpts_run_script"
+	 },
+	 {
+		 (void *(*)(void *))dlogger_info,
+		 "dlogger_info"
+	 }.
+	 {
+		 (void *(*)(void *))dlogger_debug,
+		 "dlogger_debug"
+	 },
+	 {
+		 (void *(*)(void *))dlogger_warn,
+		 "dlogger_warn"
+	 },
+	 {
+		 (void *(*)(void *))dlogger_error,
+		 "dlogger_error"
+	 },
+	 {
+		 (void *(*)(void *))dlogger_critical,
+		 "dlogger_critical"
 	 }
- };
+};
 
 
 int ddebugger(char *path)
