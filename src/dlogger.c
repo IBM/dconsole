@@ -26,42 +26,77 @@
 #include <dlfcn.h>
 #include <regex.h>
 
+#define dcp_p_red "\033[1;31m"
+#define dcp_p_green "\033[1;32m"
+#define dcp_p_yellow "\033[1;33m"
+#define dcp_p_none "\033[0m"
+
 void dlogger_debug(char *format, ...)
 {
 	va_list ap;
+	char buf[256];
+	int len;
+	memset(buf,0,256);
+	strcpy(buf,dcp_p_green"DEBUG: "dcp_p_none);
+	len = strlen(buf);
 	va_start(ap, format);
-	vprintf(format, ap);
+	vsnprintf(buf+len, 256-len, format, ap);
+	dcnsl_str_pdebug(buf);
 	return;
 }
 
 void dlogger_info(char *format, ...)
 {
 	va_list ap;
+	char buf[256];
+	int len;
+	memset(buf,0,256);
+	strcpy(buf,dcp_p_green"INFO: "dcp_p_none);
+	len = strlen(buf);
 	va_start(ap, format);
-	vprintf(format, ap);
+	vsnprintf(buf+len, 256-len, format, ap);
+	dcnsl_str_pinfo(buf);
 	return;
 }
 
 void dlogger_warn(char *format, ...)
 {
 	va_list ap;
+	char buf[256];
+	int len;
+	memset(buf,0,256);
+	strcpy(buf,dcp_p_yellow"WARN: "dcp_p_none);
+	len = strlen(buf);
 	va_start(ap, format);
-	vprintf(format, ap);
+	vsnprintf(buf+len, 256-len, format, ap);
+	dcnsl_str_pwarn(buf);
 	return;
 }
 
 void dlogger_error(char *format, ...)
 {
 	va_list ap;
+	char buf[256];
+	int len;
+	memset(buf,0,256);
+	strcpy(buf,dcp_p_red"ERROR: "dcp_p_none);
+	len = strlen(buf);
 	va_start(ap, format);
-	vprintf(format, ap);
+	vsnprintf(buf+len, 256-len, format, ap);
+	dcnsl_str_perror(buf);
 	return;
 }
 
 void dlogger_critical(char *format, ...)
 {
 	va_list ap;
+	char buf[256];
+	int len;
+	memset(buf,0,256);
+	strcpy(buf,dcp_p_red"CRITICAL: "dcp_p_none);
+	len = strlen(buf);
 	va_start(ap, format);
-	vprintf(format, ap);
+	vsnprintf(buf+len, 256-len, format, ap);
+	dcnsl_str_pcritical(buf);
 	return;
 }

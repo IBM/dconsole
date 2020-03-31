@@ -106,12 +106,12 @@ struct dl_symbol_table st[] = {
 		 "dpts_run_script"
 	 },
 	 {
-		 (void *(*)(void *))dlogger_info,
-		 "dlogger_info"
-	 },
-	 {
 		 (void *(*)(void *))dlogger_debug,
 		 "dlogger_debug"
+	 },
+	 {
+		 (void *(*)(void *))dlogger_info,
+		 "dlogger_info"
 	 },
 	 {
 		 (void *(*)(void *))dlogger_warn,

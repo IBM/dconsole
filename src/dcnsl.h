@@ -69,6 +69,51 @@
 		}\
 	while(0)
 
+#define dcnsl_str_pdebug(str)		\
+	do \
+		{\
+			struct dhandle *hndl = cnsl_get_hndl();	\
+			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_DEBUG) \
+				printf("%s", str);				\
+		}\
+	while(0)
+
+#define dcnsl_str_pinfo(str)	\
+	do \
+		{\
+			struct dhandle *hndl = cnsl_get_hndl();	\
+			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_INFO) \
+				printf("%s", str);				\
+		}\
+	while(0)
+
+#define dcnsl_str_pwarn(str)		\
+	do \
+		{\
+			struct dhandle *hndl = cnsl_get_hndl();	\
+			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_WARN) \
+				printf("%s", str);				\
+		}\
+	while(0)
+
+#define dcnsl_str_perror(str)		\
+	do \
+		{\
+			struct dhandle *hndl = cnsl_get_hndl();	\
+			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_ERROR) \
+				printf("%s", str);				\
+		}\
+	while(0)
+
+#define dcnsl_str_pcritical(str)		\
+	do \
+		{\
+			struct dhandle *hndl = cnsl_get_hndl();	\
+			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_CRITICAL) \
+				printf("%s", str);				\
+		}\
+	while(0)
+
 
 struct history_buffer {
 	void               *data;
