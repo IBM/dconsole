@@ -97,15 +97,20 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkgincludedir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_dconsole_OBJECTS = banner.$(OBJEXT) dconsole.$(OBJEXT) \
-	dcnsl_a.$(OBJEXT) ddispatcher.$(OBJEXT) console.$(OBJEXT) \
-	dhelp.$(OBJEXT) dsrand.$(OBJEXT) dlogger.$(OBJEXT)
+am_dconsole_OBJECTS = dconsole-banner.$(OBJEXT) \
+	dconsole-dconsole.$(OBJEXT) dconsole-dcnsl_a.$(OBJEXT) \
+	dconsole-ddispatcher.$(OBJEXT) dconsole-console.$(OBJEXT) \
+	dconsole-dhelp.$(OBJEXT) dconsole-dsrand.$(OBJEXT) \
+	dconsole-dlogger.$(OBJEXT)
 dconsole_OBJECTS = $(am_dconsole_OBJECTS)
 dconsole_LDADD = $(LDADD)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+dconsole_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(dconsole_CFLAGS) \
+	$(CFLAGS) $(dconsole_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -243,6 +248,8 @@ EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GENERIC_RELEASE = @GENERIC_RELEASE@
 GENERIC_VERSION = @GENERIC_VERSION@
+GLIB_CFLAGS = @GLIB_CFLAGS@
+GLIB_LIBS = @GLIB_LIBS@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -278,6 +285,9 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -346,9 +356,11 @@ top_srcdir = @top_srcdir@
 pkginclude_HEADERS = dcnsl.h ddiag.h dcnsl_list.h
 BUILT_SOURCES = dconsole.h 
 dconsole_SOURCES = banner.c dconsole.y dcnsl_a.l ddispatcher.c  dhelp.h console.c  ddiag.h  dcnsl.h dhelp.c dsrand.c dlogger.c
-AM_LDFLAGS = -ludev -ljson-c -lreadline -ldl
+AM_LDFLAGS = -ludev -ljson-c -lreadline -lglib-2.0 -ldl
 AM_YFLAGS = -d
 AM_LFLAGS = -L -I -i
+dconsole_LDFLAGS = $(GLIB_LIBS)
+dconsole_CFLAGS = $(GLIB_CFLAGS)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -439,7 +451,7 @@ dconsole.h: dconsole.c
 
 dconsole$(EXEEXT): $(dconsole_OBJECTS) $(dconsole_DEPENDENCIES) $(EXTRA_dconsole_DEPENDENCIES) 
 	@rm -f dconsole$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(dconsole_OBJECTS) $(dconsole_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(dconsole_LINK) $(dconsole_OBJECTS) $(dconsole_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -447,14 +459,14 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/banner.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/console.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dcnsl_a.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dconsole.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ddispatcher.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhelp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dlogger.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dsrand.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dconsole-banner.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dconsole-console.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dconsole-dcnsl_a.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dconsole-dconsole.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dconsole-ddispatcher.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dconsole-dhelp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dconsole-dlogger.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dconsole-dsrand.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -479,6 +491,118 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
+
+dconsole-banner.o: banner.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-banner.o -MD -MP -MF $(DEPDIR)/dconsole-banner.Tpo -c -o dconsole-banner.o `test -f 'banner.c' || echo '$(srcdir)/'`banner.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-banner.Tpo $(DEPDIR)/dconsole-banner.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='banner.c' object='dconsole-banner.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-banner.o `test -f 'banner.c' || echo '$(srcdir)/'`banner.c
+
+dconsole-banner.obj: banner.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-banner.obj -MD -MP -MF $(DEPDIR)/dconsole-banner.Tpo -c -o dconsole-banner.obj `if test -f 'banner.c'; then $(CYGPATH_W) 'banner.c'; else $(CYGPATH_W) '$(srcdir)/banner.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-banner.Tpo $(DEPDIR)/dconsole-banner.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='banner.c' object='dconsole-banner.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-banner.obj `if test -f 'banner.c'; then $(CYGPATH_W) 'banner.c'; else $(CYGPATH_W) '$(srcdir)/banner.c'; fi`
+
+dconsole-dconsole.o: dconsole.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-dconsole.o -MD -MP -MF $(DEPDIR)/dconsole-dconsole.Tpo -c -o dconsole-dconsole.o `test -f 'dconsole.c' || echo '$(srcdir)/'`dconsole.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-dconsole.Tpo $(DEPDIR)/dconsole-dconsole.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dconsole.c' object='dconsole-dconsole.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-dconsole.o `test -f 'dconsole.c' || echo '$(srcdir)/'`dconsole.c
+
+dconsole-dconsole.obj: dconsole.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-dconsole.obj -MD -MP -MF $(DEPDIR)/dconsole-dconsole.Tpo -c -o dconsole-dconsole.obj `if test -f 'dconsole.c'; then $(CYGPATH_W) 'dconsole.c'; else $(CYGPATH_W) '$(srcdir)/dconsole.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-dconsole.Tpo $(DEPDIR)/dconsole-dconsole.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dconsole.c' object='dconsole-dconsole.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-dconsole.obj `if test -f 'dconsole.c'; then $(CYGPATH_W) 'dconsole.c'; else $(CYGPATH_W) '$(srcdir)/dconsole.c'; fi`
+
+dconsole-dcnsl_a.o: dcnsl_a.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-dcnsl_a.o -MD -MP -MF $(DEPDIR)/dconsole-dcnsl_a.Tpo -c -o dconsole-dcnsl_a.o `test -f 'dcnsl_a.c' || echo '$(srcdir)/'`dcnsl_a.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-dcnsl_a.Tpo $(DEPDIR)/dconsole-dcnsl_a.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dcnsl_a.c' object='dconsole-dcnsl_a.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-dcnsl_a.o `test -f 'dcnsl_a.c' || echo '$(srcdir)/'`dcnsl_a.c
+
+dconsole-dcnsl_a.obj: dcnsl_a.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-dcnsl_a.obj -MD -MP -MF $(DEPDIR)/dconsole-dcnsl_a.Tpo -c -o dconsole-dcnsl_a.obj `if test -f 'dcnsl_a.c'; then $(CYGPATH_W) 'dcnsl_a.c'; else $(CYGPATH_W) '$(srcdir)/dcnsl_a.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-dcnsl_a.Tpo $(DEPDIR)/dconsole-dcnsl_a.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dcnsl_a.c' object='dconsole-dcnsl_a.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-dcnsl_a.obj `if test -f 'dcnsl_a.c'; then $(CYGPATH_W) 'dcnsl_a.c'; else $(CYGPATH_W) '$(srcdir)/dcnsl_a.c'; fi`
+
+dconsole-ddispatcher.o: ddispatcher.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-ddispatcher.o -MD -MP -MF $(DEPDIR)/dconsole-ddispatcher.Tpo -c -o dconsole-ddispatcher.o `test -f 'ddispatcher.c' || echo '$(srcdir)/'`ddispatcher.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-ddispatcher.Tpo $(DEPDIR)/dconsole-ddispatcher.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ddispatcher.c' object='dconsole-ddispatcher.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-ddispatcher.o `test -f 'ddispatcher.c' || echo '$(srcdir)/'`ddispatcher.c
+
+dconsole-ddispatcher.obj: ddispatcher.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-ddispatcher.obj -MD -MP -MF $(DEPDIR)/dconsole-ddispatcher.Tpo -c -o dconsole-ddispatcher.obj `if test -f 'ddispatcher.c'; then $(CYGPATH_W) 'ddispatcher.c'; else $(CYGPATH_W) '$(srcdir)/ddispatcher.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-ddispatcher.Tpo $(DEPDIR)/dconsole-ddispatcher.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ddispatcher.c' object='dconsole-ddispatcher.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-ddispatcher.obj `if test -f 'ddispatcher.c'; then $(CYGPATH_W) 'ddispatcher.c'; else $(CYGPATH_W) '$(srcdir)/ddispatcher.c'; fi`
+
+dconsole-console.o: console.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-console.o -MD -MP -MF $(DEPDIR)/dconsole-console.Tpo -c -o dconsole-console.o `test -f 'console.c' || echo '$(srcdir)/'`console.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-console.Tpo $(DEPDIR)/dconsole-console.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='console.c' object='dconsole-console.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-console.o `test -f 'console.c' || echo '$(srcdir)/'`console.c
+
+dconsole-console.obj: console.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-console.obj -MD -MP -MF $(DEPDIR)/dconsole-console.Tpo -c -o dconsole-console.obj `if test -f 'console.c'; then $(CYGPATH_W) 'console.c'; else $(CYGPATH_W) '$(srcdir)/console.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-console.Tpo $(DEPDIR)/dconsole-console.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='console.c' object='dconsole-console.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-console.obj `if test -f 'console.c'; then $(CYGPATH_W) 'console.c'; else $(CYGPATH_W) '$(srcdir)/console.c'; fi`
+
+dconsole-dhelp.o: dhelp.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-dhelp.o -MD -MP -MF $(DEPDIR)/dconsole-dhelp.Tpo -c -o dconsole-dhelp.o `test -f 'dhelp.c' || echo '$(srcdir)/'`dhelp.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-dhelp.Tpo $(DEPDIR)/dconsole-dhelp.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dhelp.c' object='dconsole-dhelp.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-dhelp.o `test -f 'dhelp.c' || echo '$(srcdir)/'`dhelp.c
+
+dconsole-dhelp.obj: dhelp.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-dhelp.obj -MD -MP -MF $(DEPDIR)/dconsole-dhelp.Tpo -c -o dconsole-dhelp.obj `if test -f 'dhelp.c'; then $(CYGPATH_W) 'dhelp.c'; else $(CYGPATH_W) '$(srcdir)/dhelp.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-dhelp.Tpo $(DEPDIR)/dconsole-dhelp.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dhelp.c' object='dconsole-dhelp.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-dhelp.obj `if test -f 'dhelp.c'; then $(CYGPATH_W) 'dhelp.c'; else $(CYGPATH_W) '$(srcdir)/dhelp.c'; fi`
+
+dconsole-dsrand.o: dsrand.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-dsrand.o -MD -MP -MF $(DEPDIR)/dconsole-dsrand.Tpo -c -o dconsole-dsrand.o `test -f 'dsrand.c' || echo '$(srcdir)/'`dsrand.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-dsrand.Tpo $(DEPDIR)/dconsole-dsrand.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dsrand.c' object='dconsole-dsrand.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-dsrand.o `test -f 'dsrand.c' || echo '$(srcdir)/'`dsrand.c
+
+dconsole-dsrand.obj: dsrand.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-dsrand.obj -MD -MP -MF $(DEPDIR)/dconsole-dsrand.Tpo -c -o dconsole-dsrand.obj `if test -f 'dsrand.c'; then $(CYGPATH_W) 'dsrand.c'; else $(CYGPATH_W) '$(srcdir)/dsrand.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-dsrand.Tpo $(DEPDIR)/dconsole-dsrand.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dsrand.c' object='dconsole-dsrand.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-dsrand.obj `if test -f 'dsrand.c'; then $(CYGPATH_W) 'dsrand.c'; else $(CYGPATH_W) '$(srcdir)/dsrand.c'; fi`
+
+dconsole-dlogger.o: dlogger.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-dlogger.o -MD -MP -MF $(DEPDIR)/dconsole-dlogger.Tpo -c -o dconsole-dlogger.o `test -f 'dlogger.c' || echo '$(srcdir)/'`dlogger.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-dlogger.Tpo $(DEPDIR)/dconsole-dlogger.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dlogger.c' object='dconsole-dlogger.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-dlogger.o `test -f 'dlogger.c' || echo '$(srcdir)/'`dlogger.c
+
+dconsole-dlogger.obj: dlogger.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -MT dconsole-dlogger.obj -MD -MP -MF $(DEPDIR)/dconsole-dlogger.Tpo -c -o dconsole-dlogger.obj `if test -f 'dlogger.c'; then $(CYGPATH_W) 'dlogger.c'; else $(CYGPATH_W) '$(srcdir)/dlogger.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dconsole-dlogger.Tpo $(DEPDIR)/dconsole-dlogger.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dlogger.c' object='dconsole-dlogger.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dconsole_CFLAGS) $(CFLAGS) -c -o dconsole-dlogger.obj `if test -f 'dlogger.c'; then $(CYGPATH_W) 'dlogger.c'; else $(CYGPATH_W) '$(srcdir)/dlogger.c'; fi`
 
 .l.c:
 	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)

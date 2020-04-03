@@ -26,6 +26,8 @@ AC_CONFIG_HEADERS([config.h])
 AC_CHECK_LIB(udev,udev_new)
 AC_CHECK_LIB(json-c,json_object_get)
 AC_CHECK_LIB(readline,readline)
+AC_CHECK_LIB(glib-2.0,g_key_file_new)
+AC_CHECK_LIB(dl, dlopen)
 
 #programs
 AC_LANG([C++])
@@ -43,12 +45,16 @@ AC_SUBST(LIBTOOL_DEPS)
 AC_PROG_LEX
 AC_PROG_YACC
 
+PKG_CHECK_MODULES(GLIB, glib-2.0 gobject-2.0)
+AC_SUBST(GLIB_LIBS)
+AC_SUBST(GLIB_CFLAGS)
+
 #headers
 AC_HEADER_STDBOOL
 AC_TYPE_SIZE_T
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([json-c/json.h libudev.h fcntl.h stdlib.h string.h sys/ioctl.h sys/param.h syslog.h unistd.h ctype.h readline/readline.h])
+AC_CHECK_HEADERS([glib.h json-c/json.h libudev.h fcntl.h stdlib.h string.h sys/ioctl.h sys/param.h syslog.h unistd.h ctype.h readline/readline.h])
 
 #libraries
 AC_FUNC_CLOSEDIR_VOID

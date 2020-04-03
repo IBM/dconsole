@@ -22,6 +22,7 @@
 #include <readline/history.h>
 #include <libudev.h>
 #include <json-c/json.h>
+#include <glib.h>
 
 #define MAXPATHLEN 256
 
@@ -37,7 +38,8 @@ int main (int argc, char **argv)
 	const char ch = '/';
 	int length;
 	char fullpath[MAXPATHLEN];
-     
+	GKeyFile *gkf_ptr;
+
 	/* /proc/self is a symbolic link to the process-ID subdir
 	 * of /proc, e.g. /proc/4323 when the pid of the process
 	 * of this program is 4323.
@@ -68,6 +70,8 @@ int main (int argc, char **argv)
 	fullpath[length] = '\0';       /* Strip '@' off the end. */
 
 	printf("Full path is: %s\n", fullpath);
+
+	gkf_ptr = g_key_file_new();
 
 #if 0
 	ret = strrchr(path, ch);
