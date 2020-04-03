@@ -48,6 +48,7 @@ unsigned long ap_e_addr ;        /* end address                  */
 #include <libudev.h>
 #include <json-c/json.h>
 #include <dlfcn.h>
+#include <glib.h>
 
 extern int yyparse (void);
 extern void yyrestart (FILE *input_file  );
@@ -128,11 +129,14 @@ struct dl_symbol_table st[] = {
 };
 
 
-int ddebugger(char *path)
+int ddebugger(char *path, void *conf_ptr)
 {
 	int status = 0;
 	int rc;
 	int tnum;
+	GKeyFile *gkf_ptr = (GKeyFile *)conf_ptr;
+	GError *gerror;
+	gsize  glength;
 
 	 dcnsldbglineno = 1;
 	 ap_s_addr = 0x0;        /* start address                */
@@ -171,6 +175,35 @@ int ddebugger(char *path)
 	 dhndl->loop_count=1;
 	 dhndl->loop_decrement=1;
 	 dhndl->flags = DCNSL_HNDL_FLAG_VERBOSITY_INFO | DCNSL_HNDL_FLAG_LOGGING_DEBUG;
+
+	 /* Get the drive information for SDC */
+	 dhndl->sdc_drives = g_key_file_get_string_list (gkf_ptr,"sdc drives","drives", &glength, &gerror );
+	
+	if (dhndl->sdc_drives == NULL){
+		fprintf (stderr, "Error reading group information for sdc drives");
+		fprintf(stderr, "%s", gerror->message);
+	}		
+
+	 dhndl->sdc_host_drives = g_key_file_get_string_list (gkf_ptr,"sdc drives","host_drives", &glength, &gerror );
+
+	if (dhndl->sdc_host_drives == NULL){
+		fprintf (stderr, "Error reading group information for sdc host drives");
+		fprintf(stderr, "%s", gerror->message);
+	}		
+
+#if defined __DEBUG_SDC_DRIVES__
+	int i=0;
+	while ( *(dhndl->sdc_drives+i) != NULL ){
+		printf("drive=%s\n", *(dhndl->sdc_drives+i));
+		i++;
+	}
+
+	i=0;
+	while ( *(dhndl->sdc_host_drives+i) != NULL ){
+		printf("drive=%s\n", *(dhndl->sdc_host_drives+i));
+		i++;
+	}
+#endif
 
 	 if(setjmp(jmpbuf) == 0){  /*save stuff for CTLC interrupt return*/
 		 /* Nothing to see here */

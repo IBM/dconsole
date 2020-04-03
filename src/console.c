@@ -39,6 +39,8 @@ int main (int argc, char **argv)
 	int length;
 	char fullpath[MAXPATHLEN];
 	GKeyFile *gkf_ptr;
+	GError *gerror;
+	gsize  glength;
 
 	/* /proc/self is a symbolic link to the process-ID subdir
 	 * of /proc, e.g. /proc/4323 when the pid of the process
@@ -73,6 +75,12 @@ int main (int argc, char **argv)
 
 	gkf_ptr = g_key_file_new();
 
+	if (!g_key_file_load_from_file(gkf_ptr, "/etc/dconsole/dconsole.conf", G_KEY_FILE_NONE, &gerror)){
+		fprintf (stderr, "Could not read config file %s\n", "/etc/dconsole/dconsole.conf");
+		fprintf(stderr, "%s", gerror->message);
+		return EXIT_FAILURE;
+	}
+
 #if 0
 	ret = strrchr(path, ch);
 	printf ("0x%x %s\n", ret, path);
@@ -83,8 +91,9 @@ int main (int argc, char **argv)
 	init_window();
 	dcnsld_srand32_init(/*PFSD_SRAND_CNSL_STREAM*/255);
 
-	status = ddebugger(fullpath);
+	status = ddebugger(fullpath, (void *)gkf_ptr);
 	cleanup();
+	g_key_file_free (gkf_ptr);
 	return status;
 }
 

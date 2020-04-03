@@ -102,6 +102,16 @@ struct dhandle {
 	char *cnsl_path;
 	void *zc;
 	int zc_level;
+	/* glib configuration file. In the event that glib is
+	   linked to SDC it would use this and not the two 
+	   variables below */
+	void *gkf_ptr;
+	/* Drives to pass to SDC. Note these are kept here so 
+	 sdc does not have to link to glib. This flies in the 
+	 face of keeping this insulated from the test suites.
+	 It will be changed in the future */
+	char **sdc_drives;
+	char **sdc_host_drives;
 	/* symbol table provided to dynamically linked diags */
 	struct dl_symbol_table *dl_symtbl;
 };

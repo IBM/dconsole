@@ -125,7 +125,7 @@ struct history_handle {
 	struct history_buffer  *history_list;
 };
 
-extern int ddebugger(char *path);
+extern int ddebugger(char *path, void *conf_ptr);
 extern void dprint_banner(void);
 extern int history_list_init(struct history_handle *h_hndl);
 extern int history_list_add(char *buf, size_t len, struct history_handle *h_hndl);
