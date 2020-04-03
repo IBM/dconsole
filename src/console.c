@@ -39,7 +39,7 @@ int main (int argc, char **argv)
 	int length;
 	char fullpath[MAXPATHLEN];
 	GKeyFile *gkf_ptr;
-	GError *gerror;
+	GError *gerror = NULL;
 	gsize  glength;
 
 	/* /proc/self is a symbolic link to the process-ID subdir
