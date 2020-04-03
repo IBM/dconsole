@@ -176,6 +176,8 @@ int ddebugger(char *path, void *conf_ptr)
 	 dhndl->loop_decrement=1;
 	 dhndl->flags = DCNSL_HNDL_FLAG_VERBOSITY_INFO | DCNSL_HNDL_FLAG_LOGGING_DEBUG;
 
+	 dhndl->gkf_ptr = conf_ptr;
+
 	 /* Get the drive information for SDC */
 	 dhndl->sdc_drives = g_key_file_get_string_list (gkf_ptr,"sdc drives","drives", &glength, &gerror );
 	
