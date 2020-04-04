@@ -72,6 +72,8 @@ struct ddiagnostic {
 				       DCNSL_HNDL_FLAG_LOGGING_WARN | DCNSL_HNDL_FLAG_LOGGING_ERROR | \
 				       DCNSL_HNDL_FLAG_LOGGING_CRITICAL )
 
+#define DCNSL_HNDL_MAX_USER_DATA 16
+
 #define DCNSL_VARS_USE_ADDRESS (1<<0)
 #define DCNSL_VARS_USE_U32     (1<<1)
 #define DCNSL_VARS_USE_U64     (1<<2)
@@ -112,6 +114,9 @@ struct dhandle {
 	 It will be changed in the future */
 	char **sdc_drives;
 	char **sdc_host_drives;
+	/* An array of void pointers purely for the pleasure
+	   0f the user */
+	void *user_data[DCNSL_HNDL_MAX_USER_DATA];
 	/* symbol table provided to dynamically linked diags */
 	struct dl_symbol_table *dl_symtbl;
 };

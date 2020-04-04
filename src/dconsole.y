@@ -137,6 +137,7 @@ int ddebugger(char *path, void *conf_ptr)
 	GKeyFile *gkf_ptr = (GKeyFile *)conf_ptr;
 	GError *gerror;
 	gsize  glength;
+	int i=0;
 
 	 dcnsldbglineno = 1;
 	 ap_s_addr = 0x0;        /* start address                */
@@ -176,11 +177,15 @@ int ddebugger(char *path, void *conf_ptr)
 	 dhndl->loop_decrement=1;
 	 dhndl->flags = DCNSL_HNDL_FLAG_VERBOSITY_INFO | DCNSL_HNDL_FLAG_LOGGING_DEBUG;
 
+	 for ( i=0; i< DCNSL_HNDL_MAX_USER_DATA; i++)
+		 dhndl->user_data[i] = NULL;
+
 	 dhndl->gkf_ptr = conf_ptr;
 
 	 /* Get the drive information for SDC */
 	 dhndl->sdc_drives = g_key_file_get_string_list (gkf_ptr,"sdc drives","drives", &glength, &gerror );
-	
+
+#if defined __DEBUG_SDC_DRIVES__	
 	if (dhndl->sdc_drives == NULL){
 		fprintf (stderr, "Error reading group information for sdc drives");
 		fprintf(stderr, "%s", gerror->message);
@@ -193,8 +198,6 @@ int ddebugger(char *path, void *conf_ptr)
 		fprintf(stderr, "%s", gerror->message);
 	}		
 
-#if defined __DEBUG_SDC_DRIVES__
-	int i=0;
 	while ( *(dhndl->sdc_drives+i) != NULL ){
 		printf("drive=%s\n", *(dhndl->sdc_drives+i));
 		i++;
