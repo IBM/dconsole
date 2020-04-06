@@ -89,6 +89,20 @@ struct dvariables {
 	unsigned int mask;
 };
 
+
+enum dl_symtbl_idx {
+	 get_handle_idx = 0,
+	 get_random_test_idx = 1,
+	 run_script_idx = 2,
+	 logger_debug_idx = 3,
+	 logger_info_idx = 4,
+	 logger_warn_idx = 5,
+	 logger_error_idx = 6,
+	 logger_critical_idx = 7
+};
+
+typedef enum dl_symtbl_idx dl_symtbl_idx;
+
 struct dl_symbol_table {
 	void *(*p2f)(void *);
 	char name[64];

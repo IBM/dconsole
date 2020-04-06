@@ -94,35 +94,35 @@ void ctlc_handler(int sig)
 }
 
 struct dl_symbol_table st[] = {
-	 {
+	[get_handle_idx] = {
 		 (void *(*)(void *))cnsl_get_hndl,
 		 "cnsl_get_hndl"
 	 },
-	 {
+	[get_random_test_idx] = {
 		 (void *(*)(void *))cnsl_get_random_test,
 		 "cnsl_get_random_test"
 	 },
-	 {
+	 [run_script_idx] = {
 		 (void *(*)(void *))dpts_run_script,
 		 "dpts_run_script"
 	 },
-	 {
+	 [logger_debug_idx] = {
 		 (void *(*)(void *))dlogger_debug,
 		 "dlogger_debug"
 	 },
-	 {
+	 [logger_info_idx] = {
 		 (void *(*)(void *))dlogger_info,
 		 "dlogger_info"
 	 },
-	 {
+	 [logger_warn_idx] = {
 		 (void *(*)(void *))dlogger_warn,
 		 "dlogger_warn"
 	 },
-	 {
+	 [logger_error_idx] = {
 		 (void *(*)(void *))dlogger_error,
 		 "dlogger_error"
 	 },
-	 {
+	 [logger_critical_idx] = {
 		 (void *(*)(void *))dlogger_critical,
 		 "dlogger_critical"
 	 }
