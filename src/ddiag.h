@@ -133,6 +133,9 @@ struct dhandle {
 	void *user_data[DCNSL_HNDL_MAX_USER_DATA];
 	/* symbol table provided to dynamically linked diags */
 	struct dl_symbol_table *dl_symtbl;
+	/* logger file descriptor and name */
+	FILE *lfp;
+	char *log_file_name;
 };
 
 struct ddp_table_list_entry {

@@ -138,6 +138,8 @@ int ddebugger(char *path, void *conf_ptr)
 	GError *gerror;
 	gsize  glength;
 	int i=0;
+	time_t current_time;
+	char *c_time_string;
 
 	 dcnsldbglineno = 1;
 	 ap_s_addr = 0x0;        /* start address                */
@@ -183,8 +185,35 @@ int ddebugger(char *path, void *conf_ptr)
 	 dhndl->gkf_ptr = conf_ptr;
 
 	 /* Get the drive information for SDC */
-	 dhndl->sdc_drives = g_key_file_get_string_list (gkf_ptr,"sdc drives","drives", &glength, &gerror );
+	 dhndl->sdc_drives = g_key_file_get_string_list (gkf_ptr,"sdc drives","drives", &glength, &gerror);
 
+	 dhndl->sdc_host_drives = g_key_file_get_string_list (gkf_ptr,"sdc drives","host_drives", &glength, &gerror);	 
+
+	 /* log file name */
+	 dhndl->log_file_name =  g_key_file_get_string (gkf_ptr,"log file","log_file", &gerror);
+
+	 current_time = time(NULL);
+	 c_time_string = ctime(&current_time);
+
+	 printf("current time: %s\n", c_time_string);
+
+	 if ( dhndl->log_file_name != NULL ){
+		 dhndl->lfp = fopen(dhndl->log_file_name,"a");
+		 printf("log file = %s\n", dhndl->log_file_name );
+		 if ( dhndl->lfp == NULL ){
+			 perror("opening logging file\n");
+		 }
+		 else {
+			 printf("file %s opened\n", dhndl->log_file_name );			 
+			 fwrite(c_time_string,1,strlen(c_time_string), dhndl->lfp);
+		 }
+	 }
+	 else {
+		 dhndl->lfp = NULL;
+		 printf("logging file not configured\n");
+	 }
+
+	 
 #if defined __DEBUG_SDC_DRIVES__	
 	if (dhndl->sdc_drives == NULL){
 		fprintf (stderr, "Error reading group information for sdc drives");
@@ -230,6 +259,9 @@ int ddebugger(char *path, void *conf_ptr)
 	 status = yyparse();
 
 	 /* printf("yyparse exit status = %d\n", status); */
+
+	if ( dhndl->lfp != NULL )
+		fclose(dhndl->lfp);
 
          free(dhndl);
 

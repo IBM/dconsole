@@ -75,7 +75,10 @@
 			struct dhandle *hndl = cnsl_get_hndl();	\
 			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_DEBUG) \
 				printf("%s", str);				\
-		}\
+			if ((hndl->flags & DCNSL_HNDL_FLAG_LOGGING_MASK) <= DCNSL_HNDL_FLAG_LOGGING_DEBUG) \
+				if (hndl->lfp != NULL) \
+					fwrite( str,1,strlen(str), hndl->lfp); fflush(hndl->lfp); \
+		}						       \
 	while(0)
 
 #define dcnsl_str_pinfo(str)	\
@@ -84,6 +87,9 @@
 			struct dhandle *hndl = cnsl_get_hndl();	\
 			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_INFO) \
 				printf("%s", str);				\
+			if ((hndl->flags & DCNSL_HNDL_FLAG_LOGGING_MASK) <= DCNSL_HNDL_FLAG_LOGGING_INFO) \
+				if (hndl->lfp != NULL) \
+					fwrite( str,1,strlen(str), hndl->lfp); fflush(hndl->lfp); \
 		}\
 	while(0)
 
@@ -93,6 +99,9 @@
 			struct dhandle *hndl = cnsl_get_hndl();	\
 			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_WARN) \
 				printf("%s", str);				\
+			if ((hndl->flags & DCNSL_HNDL_FLAG_LOGGING_MASK) <= DCNSL_HNDL_FLAG_LOGGING_WARN) \
+				if (hndl->lfp != NULL) \
+					fwrite( str,1,strlen(str), hndl->lfp); fflush(hndl->lfp); \
 		}\
 	while(0)
 
@@ -102,6 +111,9 @@
 			struct dhandle *hndl = cnsl_get_hndl();	\
 			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_ERROR) \
 				printf("%s", str);				\
+			if ((hndl->flags & DCNSL_HNDL_FLAG_LOGGING_MASK) <= DCNSL_HNDL_FLAG_LOGGING_ERROR) \
+				if (hndl->lfp != NULL) \
+					fwrite( str,1,strlen(str), hndl->lfp); fflush(hndl->lfp); \
 		}\
 	while(0)
 
@@ -111,6 +123,9 @@
 			struct dhandle *hndl = cnsl_get_hndl();	\
 			if ((hndl->flags & DCNSL_HNDL_FLAG_VERBOSITY_MASK) <= DCNSL_HNDL_FLAG_VERBOSITY_CRITICAL) \
 				printf("%s", str);				\
+			if ((hndl->flags & DCNSL_HNDL_FLAG_LOGGING_MASK) <= DCNSL_HNDL_FLAG_LOGGING_CRITICAL) \
+				if (hndl->lfp != NULL) \
+					fwrite( str,1,strlen(str), hndl->lfp); fflush(hndl->lfp); \
 		}\
 	while(0)
 
