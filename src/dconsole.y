@@ -854,7 +854,7 @@ set_cmd : SET {
 		    dcnslprint(" address   64 bit hex value\n");
 		    dcnslprint(" mask      32 bit hex value\n");
 		    dcnslprint(" U32       32 bit hex value\n");
-		    dcnslprint(" U64       32 bit hex value\n");
+		    dcnslprint(" U64       64 bit hex value\n");
 		    dcnslprint(" fail      stop, continue\n");
 		    dcnslprint(" verbosity debug, info, warn, error, critical\n"
 			     "------------------------------------------------\n");
