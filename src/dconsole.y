@@ -584,9 +584,12 @@ load_cmd : LOAD {
 	      dplist_show();
 	    }
             | LOAD IDENT {
+	      int i = 0;
               if (dplist_load((char *)tident) >= 0){
                      dhndl->table = dpts_get_table(0);
                      dhndl->num_tests = dpts_init(dhndl->table);
+		     for (i=0; i < DCNSL_HNDL_MAX_USER_DATA;i++)
+			     dhndl->user_data[i] = NULL;
                      dcnslprint(" -- Test suite %s loaded. Number of tests=%d\n",(char *)tident,
                               dhndl->num_tests);
 	             dpts_show(dhndl->table);
