@@ -222,6 +222,7 @@ eol	\n
 "warn"     { return WARN; }
 "error"    { return ERROR; }
 "critical" { return CRITICAL; }
+"json"     { return JSON; }
 
 \!              { return BANG; }
 \"              { return DOUBLEQUOTE; }

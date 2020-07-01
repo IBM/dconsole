@@ -145,6 +145,7 @@ struct ddp_table_list_entry {
 
 extern struct ddiagnostic *dpts_get_table(unsigned int flags);
 extern int dpts_show(struct ddiagnostic *tbl);
+extern int dpts_show_json(struct ddiagnostic *tbl);
 extern int dpts_init(struct ddiagnostic *tbl);
 extern int dpts_clear_run(struct ddiagnostic *tbl);
 extern int dpts_clear_disable(struct ddiagnostic *tbl);

@@ -345,6 +345,7 @@ char  *s;
 %token WARN
 %token ERROR
 %token CRITICAL
+%token JSON
 
 %left BITOR
 %left BITXOR
@@ -602,6 +603,11 @@ load_cmd : LOAD {
 
 list_cmd : LIST {
 	      dpts_show(dhndl->table);
+	    }
+            ;
+
+list_cmd : LIST JSON {
+	      dpts_show_json(dhndl->table);
 	    }
             ;
 

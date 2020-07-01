@@ -18,7 +18,7 @@
 #include <string.h>
 #include <readline/readline.h>
 #include <dirent.h>
-
+#include <json-c/json.h>
 #include "dconsole.h"
 #include "ddiag.h"
 #include "dcnsl.h"
@@ -138,11 +138,34 @@ int dpts_show(struct ddiagnostic *tbl)
 	return i;
 }
 
+int dpts_show_json(struct ddiagnostic *tbl)
+{
+	int i=0;
+	json_object *test_list_object;
+	json_object *test_object;
+        char index_str[32];
+
+	test_list_object = json_object_new_object();
+
+	while (tbl->p2f){
+                sprintf(index_str,"%d", i+ 1);
+		test_object = json_object_new_object();
+                json_object_object_add(test_object, "index", json_object_new_string(index_str));
+                json_object_object_add(test_object, "description", json_object_new_string(tbl->description));
+		json_object_object_add(test_list_object, index_str, test_object);
+		tbl++;
+		i++;
+	}
+	fprintf(stderr, "%s\n", json_object_to_json_string(test_list_object));
+	return i;
+}
+
+
 int dpts_init(struct ddiagnostic *tbl)
 {
 	int i=0;
 	while (tbl->p2f){
-		tbl->run = 0;
+                tbl->run = 0;
 		tbl->status = 0;
 		tbl->summary.num_pass=0;
 		tbl->summary.num_fail=0;
