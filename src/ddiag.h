@@ -153,6 +153,7 @@ extern int dpts_run_script(char *cmdstr);
 extern int dplist_show(void);
 extern int dplist_load(char *);
 extern int dpts_summary(struct ddiagnostic *tbl);
+extern int dpts_summary_json(struct ddiagnostic *tbl);
 extern int dpts_summary_clear(struct ddiagnostic *tbl);
 extern void cnsl_show_flags(struct dhandle *hndl);
 extern int cnsl_validate_range(struct dhandle *hndl,int r1, int r2);

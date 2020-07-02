@@ -223,6 +223,7 @@ eol	\n
 "error"    { return ERROR; }
 "critical" { return CRITICAL; }
 "json"     { return JSON; }
+"all"      { return ALL; }
 
 \!              { return BANG; }
 \"              { return DOUBLEQUOTE; }

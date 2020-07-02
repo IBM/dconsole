@@ -346,6 +346,7 @@ char  *s;
 %token ERROR
 %token CRITICAL
 %token JSON
+%token ALL
 
 %left BITOR
 %left BITXOR
@@ -614,6 +615,9 @@ list_cmd : LIST JSON {
 summary_cmd : SUMMARY {
 	      dpts_summary(dhndl->table);
 	    }
+	    | SUMMARY JSON {
+	      dpts_summary_json(dhndl->table);
+            }
 	    | SUMMARY CLEAR {
 	      dpts_summary_clear(dhndl->table);
             }
@@ -771,6 +775,14 @@ run_list : run_spec {
             ;
 
 run_spec : /* nothing */ {
+	            int i=0;
+		    for (i=0;i < dhndl->num_tests;i++){
+			    if (!(dhndl->table+i)->disable)
+				    (dhndl->table+i)->run =1;
+			    (dhndl->table+i)->status =0;
+		    }
+            }
+            | ALL {
 	            int i=0;
 		    for (i=0;i < dhndl->num_tests;i++){
 			    if (!(dhndl->table+i)->disable)

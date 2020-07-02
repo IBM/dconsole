@@ -175,6 +175,8 @@ int dpts_init(struct ddiagnostic *tbl)
 	return i;
 }
 
+
+
 int dpts_summary(struct ddiagnostic *tbl)
 {
 	int i=0;
@@ -186,6 +188,34 @@ int dpts_summary(struct ddiagnostic *tbl)
 		tbl++;
 		i++;
 	}
+	return i;
+}
+
+int dpts_summary_json(struct ddiagnostic *tbl)
+{
+	int i=0;
+	json_object *test_list_object;
+	json_object *test_object;
+        char index_str[32];
+        char pass_str[32];
+        char fail_str[32];
+	
+	test_list_object = json_object_new_object();
+
+	while (tbl->p2f){
+                sprintf(index_str,"%d", i+ 1);
+                sprintf(pass_str,"%d", tbl->summary.num_pass);
+                sprintf(fail_str,"%d", tbl->summary.num_fail);
+		test_object = json_object_new_object();
+                json_object_object_add(test_object, "index", json_object_new_string(index_str));
+                json_object_object_add(test_object, "description", json_object_new_string(tbl->description));
+                json_object_object_add(test_object, "pass", json_object_new_string(pass_str));
+                json_object_object_add(test_object, "fail", json_object_new_string(fail_str));
+		json_object_object_add(test_list_object, index_str, test_object);
+		tbl++;
+		i++;
+	}
+	fprintf(stderr, "%s\n", json_object_to_json_string(test_list_object));
 	return i;
 }
 
