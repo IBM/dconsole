@@ -803,7 +803,7 @@ run_spec : /* nothing */ {
 			    for (i=$1-1;i < $3; i++)  {
 				    if (!(dhndl->table+i)->disable)
 					    (dhndl->table+i)->run =1;
-				    (dhndl->table-+i)->status =0;
+				    (dhndl->table+i)->status =0;
 			    }
             }
             ;
